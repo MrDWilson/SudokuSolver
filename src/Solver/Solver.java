@@ -14,6 +14,10 @@ public class Solver {
 	
 	static LinkedList<LinkedList<Integer>> wrongNumbers = new LinkedList<>();
 	
+	//Experimental
+	static LinkedList<LinkedList<Integer>> potentialNumbers = new LinkedList<>();
+	
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 	public Solver(LinkedList<Tuple<String, Integer>> unsolvedSoduko) {
 		unsolved = unsolvedSoduko;
 	}
@@ -23,26 +27,44 @@ public class Solver {
 		fill();
 		initialiseWrong();
 		initialiseWrongList();
+//<<<<<<< HEAD
+//=======
+		initialisePotential();
+		checkPotential();
+		checkForSingle();
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 		
 		
 		while(!solved()) {
 			
 			int i = 0;
-			for(i=1;i<=81;i++) {
-				if(unsolved.get(i-1).getValue() == 0) {
-					checkIfReady(i);
-					checkNumberForMatch(i);
+//<<<<<<< HEAD
+			for(i=0;i<81;i++) {
+				if(unsolved.get(i).getValue() == 0) {
+					checkIfReady(i+1);
+					checkNumberForMatch(i+1);
+					boxLineReduction();
+					nakedPair();
+					nakedTriple();
+					
+					checkForSingle();
+					
+					//Error tracker
+					
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 					//System.out.println("Trying box: " + i);
 					//System.out.println(wrongNumbers.get(i-1).toString());
 				}else {/*System.out.println("Filled");*/}
-				
 			}
+//<<<<<<< HEAD
 			
+			
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 		}
-		
 		return unsolved;
-		
 	}
+			
+			
 	
 	public static Boolean solved() {
 		int i = 0;
@@ -65,6 +87,10 @@ public class Solver {
 		int i = 0;
 		for(i=0;i<81;i++) {
 			wrongNumbers.add(new LinkedList<>());
+//<<<<<<< HEAD
+//=======
+			potentialNumbers.add(new LinkedList<>());
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 		}
 	}
 	
@@ -116,6 +142,10 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfRows(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfRows(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
+//<<<<<<< HEAD
+//=======
+					checkPotential();
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 					return true;
 				}
 				
@@ -124,6 +154,10 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfCols(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfCols(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
+//<<<<<<< HEAD
+//=======
+					checkPotential();
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 					return true;
 				}
 				
@@ -132,6 +166,10 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfBox(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfBox(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
+//<<<<<<< HEAD
+//=======
+					checkPotential();
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
 					return true;
 				}
 				
@@ -155,7 +193,537 @@ public class Solver {
 				}
 				wrongNumbers.get(i).addAll(temp);
 			}
+//<<<<<<< HEAD
+//=======
+			/*if(unsolved.get(i).getValue() != 0) {
+				List<Integer> temp = new ArrayList<>();
+				for(j=1;j<10;j++) {
+					if(j == unsolved.get(i).getValue()) {
+						temp.add(j);
+					}
+				}
+				potentialNumbers.get(i).addAll(temp);
+			}*/
 		}
+	}
+	
+	public static void initialisePotential() {
+		
+		for(int i=0; i<81;i++) {
+			potentialNumbers.get(i).addAll(Arrays.asList(1,2,3,4,5,6,7,8,9));
+		}
+		
+		for(int i=1;i<82;i++) {
+			if(unsolved.get(i-1).getValue() != 0) {
+				List<Integer> rows = getRestOfRows(i);
+				List<Integer> cols = getRestOfCols(i);
+				List<Integer> box = getRestOfBox(i);
+				for(int j=0;j<9;j++) {
+					if(rows.get(j) != i) {
+						if(potentialNumbers.get(rows.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(rows.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(rows.get(j)).clear(); }
+				}
+				for(int j=0;j<9;j++) {
+					if(cols.get(j) != i) {
+						if(potentialNumbers.get(cols.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(cols.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(cols.get(j)).clear(); }
+				}
+				for(int j=0;j<9;j++) {
+					if(box.get(j) != i) {
+						if(potentialNumbers.get(box.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(box.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(box.get(j)).clear(); }
+				}
+				if(!potentialNumbers.get(i-1).isEmpty()) {
+					potentialNumbers.get(i-1).clear();
+				}
+				
+			}
+		}
+		
+	}
+	
+	public static void checkPotential() {
+		
+		for(int i=1;i<82;i++) {
+			if(unsolved.get(i-1).getValue() != 0) {
+				List<Integer> rows = getRestOfRows(i);
+				List<Integer> cols = getRestOfCols(i);
+				List<Integer> box = getRestOfBox(i);
+				for(int j=0;j<9;j++) {
+					if(rows.get(j) != i) {
+						if(potentialNumbers.get(rows.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(rows.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(rows.get(j)).clear(); }
+				}
+				for(int j=0;j<9;j++) {
+					if(cols.get(j) != i) {
+						if(potentialNumbers.get(cols.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(cols.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(cols.get(j)).clear(); }
+				}
+				for(int j=0;j<9;j++) {
+					if(box.get(j) != i) {
+						if(potentialNumbers.get(box.get(j)-1).contains(unsolved.get(i-1).getValue())) {
+							potentialNumbers.get(box.get(j)-1).remove(unsolved.get(i-1).getValue());
+						}
+						
+					} //else { potentialNumbers.get(box.get(j)).clear(); }
+				}
+				if(!potentialNumbers.get(i-1).isEmpty()) {
+					potentialNumbers.get(i-1).clear();
+				}
+				
+				//System.out.println("Removed: " + i + ", value: " + unsolved.get(i-1).getValue());
+				
+			}
+		}
+		
+	}
+	
+	public static void nakedPair() {
+		List<Integer> row = Arrays.asList(1,10,19,28,37,46,55,64,73);
+		List<Integer> col = Arrays.asList(1,2,3,4,5,6,7,8,9);
+		List<Integer> box = Arrays.asList(1,4,7,28,31,34,55,58,61);
+		for(int i=0;i<9;i++) {
+			List<Integer> rows = getRestOfRows(row.get(i));
+			for(int j = 0; j<9;j++) {
+				if(potentialNumbers.get(rows.get(j)-1).size() == 2) {
+					for(int k=0;k<9;k++) {
+						if(rows.get(k) != rows.get(j)) {
+							if(potentialNumbers.get(rows.get(k)-1).size() == 2) {
+								if(potentialNumbers.get(rows.get(k)-1).equals(potentialNumbers.get(rows.get(j)-1))) {
+									removePair(
+											rows.get(j), 
+											rows.get(k), 
+											potentialNumbers.get(rows.get(j)-1).getFirst(), 
+											potentialNumbers.get(rows.get(j)-1).getLast(), 
+											1
+											);
+//									System.out.println("Naked pair.");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		for(int i=0;i<9;i++) {
+			List<Integer> cols = getRestOfCols(col.get(i));
+			for(int j = 0; j<9;j++) {
+				if(potentialNumbers.get(cols.get(j)-1).size() == 2) {
+					for(int k=0;k<9;k++) {
+						if(cols.get(k) != cols.get(j)) {
+							if(potentialNumbers.get(cols.get(k)-1).size() == 2) {
+								if(potentialNumbers.get(cols.get(k)-1).equals(potentialNumbers.get(cols.get(j)-1))) {
+									removePair(
+											cols.get(j), 
+											cols.get(k), 
+											potentialNumbers.get(cols.get(j)-1).getFirst(), 
+											potentialNumbers.get(cols.get(j)-1).getLast(), 
+											2
+											);
+//									System.out.println("Naked pair.");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		for(int i=0;i<9;i++) {
+			List<Integer> boxs = getRestOfRows(box.get(i));
+			for(int j = 0; j<9;j++) {
+				if(potentialNumbers.get(boxs.get(j)-1).size() == 2) {
+					for(int k=0;k<9;k++) {
+						if(boxs.get(k) != boxs.get(j)) {
+							if(potentialNumbers.get(boxs.get(k)-1).size() == 2) {
+								if(potentialNumbers.get(boxs.get(k)-1).equals(potentialNumbers.get(boxs.get(j)-1))) {
+									removePair(
+											boxs.get(j), 
+											boxs.get(k), 
+											potentialNumbers.get(boxs.get(j)-1).getFirst(), 
+											potentialNumbers.get(boxs.get(j)-1).getLast(), 
+											3
+											);
+//									System.out.println("Naked pair.");
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public static void removePair(int boxOne, int boxTwo, int val1, int val2, int op) {
+		if(op == 1) {
+			List<Integer> row = getRestOfRows(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(row.get(i) != boxOne && row.get(i) != boxTwo && row.contains(boxOne) && row.contains(boxTwo)) {
+					if(potentialNumbers.get(row.get(i)-1).contains(val1)) {
+						potentialNumbers.get(row.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(row.get(i)-1).contains(val2)) {
+						potentialNumbers.get(row.get(i)-1).removeFirstOccurrence(val2);
+					}
+				}
+			}
+		}else if(op == 2) {
+			List<Integer> col = getRestOfCols(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(col.get(i) != boxOne && col.get(i) != boxTwo && col.contains(boxOne) && col.contains(boxTwo)) {
+					if(potentialNumbers.get(col.get(i)-1).contains(val1)) {
+						potentialNumbers.get(col.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(col.get(i)-1).contains(val2)) {
+						potentialNumbers.get(col.get(i)-1).removeFirstOccurrence(val2);
+					}
+				}
+			}
+			
+		}else if (op== 3) {
+			List<Integer> box = getRestOfBox(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(box.get(i) != boxOne && box.get(i) != boxTwo && box.contains(boxOne) && box.contains(boxTwo)) {
+					if(potentialNumbers.get(box.get(i)-1).contains(val1)) {
+						potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(box.get(i)-1).contains(val2)) {
+						potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(val2);
+					}
+				}
+			}
+			
+		}
+	}
+	
+	public static void nakedTriple() {
+		
+			List<Integer> row = Arrays.asList(1,10,19,28,37,46,55,64,73);
+			List<Integer> col = Arrays.asList(1,2,3,4,5,6,7,8,9);
+			List<Integer> box = Arrays.asList(1,4,7,28,31,34,55,58,61);
+			for(int i=0;i<9;i++) {
+				List<Integer> rows = getRestOfRows(row.get(i));
+				for(int j = 0; j<9;j++) {
+					if(potentialNumbers.get(rows.get(j)-1).size() == 3) {
+						for(int k=0;k<9;k++) {
+							if(rows.get(k) != rows.get(j)) {
+								if(potentialNumbers.get(rows.get(k)-1).size() == 3) {
+									for(int a=0;a<9;a++) {
+										if(rows.get(k) != rows.get(a) && rows.get(j) != rows.get(a)) {
+											if(potentialNumbers.get(rows.get(a)-1).size() == 3) {
+												if(potentialNumbers.get(rows.get(k)-1).equals(potentialNumbers.get(rows.get(j)-1))) {
+													if(potentialNumbers.get(rows.get(k)-1).equals(potentialNumbers.get(rows.get(a)-1))) {
+														removeTriple(
+																rows.get(j), 
+																rows.get(k), 
+																rows.get(a),
+																potentialNumbers.get(rows.get(j)-1).getFirst(), 
+																potentialNumbers.get(rows.get(j)-1).get(1), 
+																potentialNumbers.get(rows.get(a)-1).getLast(),
+																1
+																);
+														System.out.println("Naked Triple.");
+													}
+												}
+											}
+										}
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+			for(int i=0;i<9;i++) {
+				List<Integer> cols = getRestOfCols(col.get(i));
+				for(int j = 0; j<9;j++) {
+					if(potentialNumbers.get(cols.get(j)-1).size() == 3) {
+						for(int k=0;k<9;k++) {
+							if(cols.get(k) != cols.get(j)) {
+								if(potentialNumbers.get(cols.get(k)-1).size() == 3) {
+									for(int a=0;a<9;a++) {
+										if(cols.get(k) != cols.get(a) && cols.get(j) != cols.get(a)) {
+											if(potentialNumbers.get(cols.get(a)-1).size() == 3) {
+												if(potentialNumbers.get(cols.get(k)-1).equals(potentialNumbers.get(cols.get(j)-1))) {
+													if(potentialNumbers.get(cols.get(k)-1).equals(potentialNumbers.get(cols.get(a)-1))) {
+														removeTriple(
+																cols.get(j), 
+																cols.get(k), 
+																cols.get(a),
+																potentialNumbers.get(cols.get(j)-1).getFirst(), 
+																potentialNumbers.get(cols.get(j)-1).get(1), 
+																potentialNumbers.get(cols.get(a)-1).getLast(),
+																2
+																);
+														System.out.println("Naked Triple.");
+													}
+												}
+											}
+										}
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+			for(int i=0;i<9;i++) {
+				List<Integer> boxs = getRestOfRows(box.get(i));
+				for(int j = 0; j<9;j++) {
+					if(potentialNumbers.get(boxs.get(j)-1).size() == 3) {
+						for(int k=0;k<9;k++) {
+							if(boxs.get(k) != boxs.get(j)) {
+								if(potentialNumbers.get(boxs.get(k)-1).size() == 3) {
+									for(int a=0;a<9;a++) {
+										if(boxs.get(k) != boxs.get(a) && boxs.get(j) != boxs.get(a)) {
+											if(potentialNumbers.get(boxs.get(a)-1).size() == 3) {
+												if(potentialNumbers.get(boxs.get(k)-1).equals(potentialNumbers.get(boxs.get(j)-1))) {
+													if(potentialNumbers.get(boxs.get(k)-1).equals(potentialNumbers.get(boxs.get(a)-1))) {
+														removeTriple(
+																boxs.get(j), 
+																boxs.get(k), 
+																boxs.get(a),
+																potentialNumbers.get(boxs.get(j)-1).getFirst(), 
+																potentialNumbers.get(boxs.get(j)-1).get(1), 
+																potentialNumbers.get(boxs.get(a)-1).getLast(),
+																3
+																);
+														System.out.println("Naked Triple.");
+													}
+												}
+											}
+										}
+									}
+									
+								}
+							}
+						}
+					}
+				}
+			}
+		
+	}
+	
+	public static void removeTriple(int boxOne, int boxTwo, int boxThree, int val1, int val2, int val3, int op) {
+		if(op == 1) {
+			List<Integer> row = getRestOfRows(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(row.get(i) != boxOne && row.get(i) != boxTwo && row.get(i) != boxThree && row.contains(boxOne) && row.contains(boxTwo) && row.contains(boxThree)) {
+					if(potentialNumbers.get(row.get(i)-1).contains(val1)) {
+						potentialNumbers.get(row.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(row.get(i)-1).contains(val2)) {
+						potentialNumbers.get(row.get(i)-1).removeFirstOccurrence(val2);
+					}
+					if(potentialNumbers.get(row.get(i)-1).contains(val3)) {
+						potentialNumbers.get(row.get(i)-1).removeLastOccurrence(val3);
+					}
+				}
+			}
+		}else if(op == 2) {
+			List<Integer> col = getRestOfCols(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(col.get(i) != boxOne && col.get(i) != boxTwo && col.get(i) != boxThree && col.contains(boxOne) && col.contains(boxTwo) && col.contains(boxThree)) {
+					if(potentialNumbers.get(col.get(i)-1).contains(val1)) {
+						potentialNumbers.get(col.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(col.get(i)-1).contains(val2)) {
+						potentialNumbers.get(col.get(i)-1).removeFirstOccurrence(val2);
+					}
+					if(potentialNumbers.get(col.get(i)-1).contains(val3)) {
+						potentialNumbers.get(col.get(i)-1).removeFirstOccurrence(val3);
+					}
+				}
+			}
+			
+		}else if (op== 3) {
+			List<Integer> box = getRestOfBox(boxOne);
+			for(int i = 0;i<9;i++) {
+				if(box.get(i) != boxOne && box.get(i) != boxTwo && box.get(i) != boxThree && box.contains(boxOne) && box.contains(boxTwo) && box.contains(boxThree)) {
+					if(potentialNumbers.get(box.get(i)-1).contains(val1)) {
+						potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(val1);
+					} 
+					if(potentialNumbers.get(box.get(i)-1).contains(val2)) {
+						potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(val2);
+					}
+					if(potentialNumbers.get(box.get(i)-1).contains(val3)){
+						potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(val3);
+					}
+				}
+			}
+			
+		}
+		
+	}
+	
+	public static void checkForSingle() {
+		for(int i=0;i<81;i++) {
+			if(unsolved.get(i).getValue() == 0) {
+				if(potentialNumbers.get(i).size() == 1) {
+					if(errorAvoider(i+1, potentialNumbers.get(i).getFirst())) {
+						int temp = potentialNumbers.get(i).getFirst();
+						unsolved.get(i).setValue(temp);
+						fillBoxOnFinish(i+1, temp);
+						System.out.println("Entered 2.0: " + (i+1) + ", value: " + temp);
+						//System.out.println(potentialNumbers.get(i).toString());
+						checkPotential();
+					}
+				}
+			}
+			
+			
+//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+		}
+	}
+	
+	public static void boxLineReduction() {
+		
+		for(int i = 0;i<9;i++) {
+			
+			switch(i) {
+			case 0: boxLine(1,2,3,1,2,3,1,1,1);
+			case 1: boxLine(1,2,3,4,5,6,1,4,2);
+			case 2: boxLine(1,2,3,7,8,9,1,7,3);
+			case 3: boxLine(4,5,6,1,2,3,4,1,4);
+			case 4: boxLine(4,5,6,4,5,6,4,4,5);
+			case 5: boxLine(4,5,6,7,8,9,4,7,6);
+			case 6: boxLine(7,8,9,1,2,3,7,1,7);
+			case 7: boxLine(7,8,9,4,5,6,7,4,8);
+			case 8: boxLine(7,8,9,7,8,9,7,7,9);
+			}
+			
+		}
+		
+	}
+	
+	public static void boxLine(
+			int rowOne, 
+			int rowTwo, 
+			int rowThree, 
+			int colOne, 
+			int colTwo, 
+			int colThree, 
+			int rowEx, 
+			int colEx, 
+			int boxNumber
+			) {
+		
+		List<Integer> row = Arrays.asList(1,10,19,28,37,46,55,64,73);
+		List<Integer> col = Arrays.asList(1,2,3,4,5,6,7,8,9);
+		List<Integer> box = Arrays.asList(1,4,7,28,31,34,55,58,61);
+		
+		List<Integer> rowOneFull = getRestOfRows(row.get(rowOne-1));
+		List<Integer> rowTwoFull = getRestOfRows(row.get(rowTwo-1));
+		List<Integer> rowThreeFull = getRestOfRows(row.get(rowThree-1));
+		
+		List<Integer> colOneFull = getRestOfCols(col.get(colOne-1));
+		List<Integer> colTwoFull = getRestOfCols(col.get(colTwo-1));
+		List<Integer> colThreeFull = getRestOfCols(col.get(colThree-1));
+		
+		List<Integer> rowOneBox = new ArrayList<>();
+		rowOneBox.add(rowEx-1);
+		rowOneBox.add(rowEx);
+		rowOneBox.add(rowEx+1);
+		rowOneFull.remove(rowEx-1);
+		rowOneFull.remove(rowEx-1);
+		rowOneFull.remove(rowEx-1);
+		
+		List<Integer> rowTwoBox = new ArrayList<>();
+		rowTwoBox.add(rowEx-1);
+		rowTwoBox.add(rowEx);
+		rowTwoBox.add(rowEx+1);
+		rowTwoFull.remove(rowEx-1);
+		rowTwoFull.remove(rowEx-1);
+		rowTwoFull.remove(rowEx-1);
+		
+		List<Integer> rowThreeBox = new ArrayList<>();
+		rowThreeBox.add(rowEx-1);
+		rowThreeBox.add(rowEx);
+		rowThreeBox.add(rowEx+1);
+		rowThreeFull.remove(rowEx-1);
+		rowThreeFull.remove(rowEx-1);
+		rowThreeFull.remove(rowEx-1);
+		
+		List<Integer> colOneBox = new ArrayList<>();
+		colOneBox.add(colEx-1);
+		colOneBox.add(colEx);
+		colOneBox.add(colEx+1);
+		colOneFull.remove(colEx-1);
+		colOneFull.remove(colEx-1);
+		colOneFull.remove(colEx-1);
+		
+		List<Integer> colTwoBox = new ArrayList<>();
+		colTwoBox.add(colEx-1);
+		colTwoBox.add(colEx);
+		colTwoBox.add(colEx+1);
+		colTwoFull.remove(colEx-1);
+		colTwoFull.remove(colEx-1);
+		colTwoFull.remove(colEx-1);
+		
+		List<Integer> colThreeBox = new ArrayList<>();
+		colThreeBox.add(colEx-1);
+		colThreeBox.add(colEx);
+		colThreeBox.add(colEx+1);
+		colThreeFull.remove(colEx-1);
+		colThreeFull.remove(colEx-1);
+		colThreeFull.remove(colEx-1);
+		
+		
+		checkForRed(rowOneFull, rowOneBox, boxNumber);
+		checkForRed(rowTwoFull, rowTwoBox, boxNumber);
+		checkForRed(rowThreeFull, rowThreeBox, boxNumber);
+		checkForRed(colOneFull, colOneBox, boxNumber);
+		checkForRed(colTwoFull, colTwoBox, boxNumber);
+		checkForRed(colThreeFull, colThreeBox, boxNumber);
+	}
+	
+	public static int checkForRed(List<Integer> rowCol, List<Integer> box, int boxNumber) {
+		for(int i=1;i<10;i++) {
+			for(int k=0;k<6;k++) {
+				if(potentialNumbers.get(rowCol.get(k)-1).contains(i) || unsolved.get(rowCol.get(k)-1).getValue() == i) {
+					return 0;
+				} else if(!potentialNumbers.get(rowCol.get(k)-1).contains(i) && k == 5 && unsolved.get(rowCol.get(k)-1).getValue() != i) {
+					for(int z = 0; z<3;z++) {
+						if(potentialNumbers.get(box.get(z)).contains(i)) {
+							clearRed(i, boxNumber, box);
+						}
+					}
+				}
+			}
+		}
+		return 1;
+	}
+	
+	public static void clearRed(int number, int boxNumber, List<Integer> excluded) {
+		
+		List<Integer> box = getRestOfBox(boxNumber);
+		
+		for(int i=0;i<9;i++) {
+			if(!excluded.contains(box.get(i))) {
+				if(potentialNumbers.get(box.get(i)-1).contains(number)) {
+					potentialNumbers.get(box.get(i)-1).removeFirstOccurrence(number);
+					System.out.println("Reduction cleared.");
+					System.out.println("Box: " + (box.get(i)) + ", value: " + number);
+				}
+			}
+		}
+		
 	}
 	
 	public static List<Integer> getRestOfRows(int boxNumber) {
