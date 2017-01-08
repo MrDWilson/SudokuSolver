@@ -17,7 +17,7 @@ public class Solver {
 	//Experimental
 	static LinkedList<LinkedList<Integer>> potentialNumbers = new LinkedList<>();
 	
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 	public Solver(LinkedList<Tuple<String, Integer>> unsolvedSoduko) {
 		unsolved = unsolvedSoduko;
 	}
@@ -27,18 +27,17 @@ public class Solver {
 		fill();
 		initialiseWrong();
 		initialiseWrongList();
-//<<<<<<< HEAD
-//=======
+
 		initialisePotential();
 		checkPotential();
 		checkForSingle();
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 		
 		
 		while(!solved()) {
 			
 			int i = 0;
-//<<<<<<< HEAD
+
 			for(i=0;i<81;i++) {
 				if(unsolved.get(i).getValue() == 0) {
 					checkIfReady(i+1);
@@ -51,15 +50,15 @@ public class Solver {
 					
 					//Error tracker
 					
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 					//System.out.println("Trying box: " + i);
 					//System.out.println(wrongNumbers.get(i-1).toString());
 				}else {/*System.out.println("Filled");*/}
 			}
-//<<<<<<< HEAD
+
 			
 			
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 		}
 		return unsolved;
 	}
@@ -87,10 +86,9 @@ public class Solver {
 		int i = 0;
 		for(i=0;i<81;i++) {
 			wrongNumbers.add(new LinkedList<>());
-//<<<<<<< HEAD
-//=======
+
 			potentialNumbers.add(new LinkedList<>());
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 		}
 	}
 	
@@ -142,10 +140,9 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfRows(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfRows(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
-//<<<<<<< HEAD
-//=======
+
 					checkPotential();
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 					return true;
 				}
 				
@@ -154,10 +151,9 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfCols(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfCols(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
-//<<<<<<< HEAD
-//=======
+
 					checkPotential();
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 					return true;
 				}
 				
@@ -166,10 +162,9 @@ public class Solver {
 					unsolved.get(boxNumber-1).setValue(doesContain(getRestOfBox(boxNumber), i, boxNumber));
 					System.out.println("Entered: " + boxNumber + ", value: " + doesContain(getRestOfBox(boxNumber), i, boxNumber));
 					fillBoxOnFinish(boxNumber, doesContain(getRestOfRows(boxNumber), i, boxNumber));
-//<<<<<<< HEAD
-//=======
+
 					checkPotential();
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 					return true;
 				}
 				
@@ -193,8 +188,7 @@ public class Solver {
 				}
 				wrongNumbers.get(i).addAll(temp);
 			}
-//<<<<<<< HEAD
-//=======
+
 			/*if(unsolved.get(i).getValue() != 0) {
 				List<Integer> temp = new ArrayList<>();
 				for(j=1;j<10;j++) {
@@ -588,7 +582,7 @@ public class Solver {
 			}
 			
 			
-//>>>>>>> 598aa93c0ba0b9a94bb1e652b2a838cf94ca396e
+
 		}
 	}
 	
